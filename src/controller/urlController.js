@@ -1,6 +1,32 @@
 const urlModel = require("../models/urlModel")
 const shortid = require("shortid");
 const validUrl = require("valid-url");
+const redis = require("redis");
+const { promisify } = require("util");
+
+//Connect to redis
+const redisClient = redis.createClient(
+    16744,
+    "redis-16744.c212.ap-south-1-1.ec2.cloud.redislabs.com",
+    { no_ready_check: true }
+  );
+  redisClient.auth("ijENF9iTdiDceRpVKvmufPPTgM15lUW0", function (err) {
+    if (err) throw err;
+  });
+
+  redisClient.on("connect", async function () {
+     
+    console.log("Connected to Redis..");
+  });
+  
+  //1. connect to the server
+//2. use the commands :
+
+//Connection setup for redis
+
+const SET_ASYNC = promisify(redisClient.SET).bind(redisClient);
+const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
+
 
 const isValid = function(value){
     if(typeof value ==='undefined' || typeof value === null) return false
@@ -62,7 +88,7 @@ const createUrl = async function(req, res){
 
         try{
             const urlCode = shortid.generate();
-            const myurl = await urlModel.findOne({longUrl : longUrl}).select({longUrl:1,shortUrl:1,urlCode:1,_id:0})
+            const myurl = await urlModel.findOne({longUrl : longUrl}).select({_id:0,__v:0})
             console.log(myurl);
             if(myurl){
                 return  res.status(201).send({status:true,data:myurl});
@@ -91,25 +117,42 @@ const createUrl = async function(req, res){
     }    
 };
 
-
-const getShorturl = async function(req, res){
-    try{
-        const shortUrlCode = req.params.urlCode;
-    const url = await urlModel.findOne({ urlCode: shortUrlCode });
-
-    if(url){
-        return res.status(302).redirect(url.longUrl);
-        } else {
-            return res.status(400).send("The short url doesn't exists in our system.");
-        }
+const getShorturl = async function (req, res) {
+    let urlCode = req.params.urlCode
+    let cahcedProfileData = await GET_ASYNC(`${urlCode}`)
+    if(cahcedProfileData) {
+        let datatype = JSON.parse(cahcedProfileData)
+        console.log(datatype)
+      return res.status(302).redirect(datatype.longUrl)
+    } else {
+      const profile = await urlModel.findOne({urlCode:urlCode});
+      if(profile){
+        await SET_ASYNC(`${urlCode}`, JSON.stringify(profile))
+      return res.status(302).redirect(profile.longUrl );}
+      
+      
+      
     }
+  
+  };
+// const getShorturl = async function(req, res){
+//     try{
+//         const shortUrlCode = req.params.urlCode;
+//     const url = await urlModel.findOne({ urlCode: shortUrlCode });
+
+//     if(url){
+//         return res.status(302).redirect(url.longUrl);
+//         } else {
+//             return res.status(400).send("The short url doesn't exists in our system.");
+//         }
+//     }
 
     
-catch(err){
-    console.error(err.message);
-    return res.status(500).json("Internal Server error " + err.message);
-}
-}
+// catch(err){
+//     console.error(err.message);
+//     return res.status(500).json("Internal Server error " + err.message);
+// }
+// }
 
 
 
@@ -117,3 +160,5 @@ catch(err){
 
 module.exports.createUrl = createUrl;
 module.exports.getShorturl=getShorturl
+
+
