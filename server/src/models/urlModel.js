@@ -23,6 +23,16 @@ const UrlSchema = new mongoose.Schema({
         type: Number,
         required: true,
         default: 0
+    },
+    userId: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: false // Allow guest generation
+    },
+    expiresAt: {
+        type: Date,
+        required: false,
+        index: { expireAfterSeconds: 0 } // TTL Index
     }
 }, { timestamps: true });
 

@@ -8,6 +8,8 @@ const rateLimit = require('express-rate-limit');
 const connectDB = require('./config/db');
 const { connectRedis } = require('./config/redis');
 const urlRoutes = require('./routes/url.routes');
+const authRoutes = require('./routes/auth.routes');
+const analyticsRoutes = require('./routes/analytics.routes');
 const errorHandler = require('./middlewares/errorHandler');
 const AppError = require('./utils/AppError');
 
@@ -34,6 +36,8 @@ const limiter = rateLimit({
 app.use('/url/shorten', limiter);
 
 // Routes
+app.use('/auth', authRoutes);
+app.use('/analytics', analyticsRoutes);
 app.use('/', urlRoutes);
 
 // Unhandled Routes

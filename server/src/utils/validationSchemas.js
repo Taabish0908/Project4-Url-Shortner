@@ -9,6 +9,9 @@ const urlSchema = Joi.object({
         'string.alphanum': 'Custom alias must only contain alphanumeric characters.',
         'string.min': 'Custom alias minimum length is 3.',
         'string.max': 'Custom alias maximum length is 15.'
+    }),
+    expiresInDays: Joi.number().integer().min(1).max(365).optional().messages({
+        'number.base': 'Expiration must be a number representing days.'
     })
 });
 
