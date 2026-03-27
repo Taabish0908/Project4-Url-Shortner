@@ -23,9 +23,10 @@ function App() {
         <Route path="/login" element={!user ? <Login /> : <Navigate to="/dashboard" />} />
         <Route path="/register" element={!user ? <Register /> : <Navigate to="/dashboard" />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/resetpassword/:token" element={<ResetPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
         <Route path="/admin" element={user && user.role === 'admin' ? <Admin /> : <Navigate to="/dashboard" />} />
+        <Route path="*" element={<div style={{ color: 'white', textAlign: 'center', padding: '5rem' }}><h2>404 - Not Found</h2><p>Path: {window.location.pathname}</p></div>} />
       </Routes>
     </div>
   );
