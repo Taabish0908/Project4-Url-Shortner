@@ -37,7 +37,14 @@ const Dashboard = () => {
   return (
     <div>
       <h2 style={{ marginBottom: '1rem' }}>Welcome, {user.name}!</h2>
-      <div className="app-container" style={{ gridTemplateColumns: selectedAnalytics ? '1fr 1fr' : '1fr' }}>
+      <div className="app-container" style={{
+    display: "grid",
+    gridTemplateColumns: selectedAnalytics ? "minmax(0,1fr) minmax(0,1fr)" : "minmax(0,1fr)",
+    gap: "1.5rem",
+    width: "100%",
+    maxWidth: "100%",
+    overflow: "hidden"
+  }}>
         
         <div className="glass-panel">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>

@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -34,6 +34,13 @@ const Login = () => {
         {error && <div className="error-message">{error}</div>}
         <button type="submit" className="btn">Sign In</button>
       </form>
+      <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+        <Link to="/forgotpassword" style={{ color: 'var(--primary-color)', textDecoration: 'none' }}>Forgot Password?</Link>
+      </div>
+      <div style={{ textAlign: 'center', marginTop: '0.5rem' }}>
+        <span>Don't have an account? </span>
+        <Link to="/register" style={{ color: 'var(--primary-color)', textDecoration: 'none' }}>Register</Link>
+      </div>
     </div>
   );
 };
